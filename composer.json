@@ -1,11 +1,11 @@
 {
-    "name": "wekreit/php-orange-sms",
+    "name": "wekreit/orange-sms",
     "description": "PHP library to get access to Orange SMS API send SMS",
     "type": "library",
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Wekreit\\PhpOrangeSms\\": "src/"
+            "Wekreit\\OrangeSms\\": "src/"
         }
     },
     "authors": [
