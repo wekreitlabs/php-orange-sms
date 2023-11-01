@@ -2,6 +2,8 @@
 
 namespace Wekreit\OrangeSms;
 
+use Wekreit\OrangeSms\Http\Post;
+
 class OrangeSms
 {
     // BASE URL Constantes
@@ -43,52 +45,45 @@ class OrangeSms
 
     private function sendSmsRequest(string $recipientPhoneNumber, string $SmsTextMessage)
     {
-        $ch = curl_init();
-
         define('URL_API',
                self::BASE_URL .
                self::MESSANGING .
                "/outbound/tel%3A%2B" .
                $this->getSenderAddress() .
-               "/request");
+               "/request"
+        );
 
         $header =  array(
             'Content-Type: application/json',
             'Authorization: Basic ' . $this->token
         );
 
-        $data = array("outboundSMSMessageRequest" => array(
-            "address" => "tel+" . $recipientPhoneNumber,
-            "senderAddress" => "tel+" . $this->getSenderAddress(),
-            "outboundSMSTextMessage" => array(
-                "message" => $SmsTextMessage,
-            ),
-        ));
-                
-        curl_setopt($ch, CURLOPT_URL, URL_API);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $data = [
+            "outboundSMSMessageRequest" => [
+                "address" => "tel+" . $recipientPhoneNumber,
+                "senderAddress" => "tel+" . $this->getSenderAddress(),
+                "outboundSMSTextMessage" => [
+                    "message" => $SmsTextMessage,
+                ],
+            ]
+        ];
 
-        $output = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $server_output = array($output,$http_code);
-        
-        curl_close($ch);
+        $curl = new Post(URL_API, [
+            CURLOPT_HTTPHEADER => $header,
+        ]);
 
-        return $server_output;
+        try {
+            return $curl($data);
+        } catch (\RuntimeException $ex)
+        {
+            die(sprintf('Http error %s with code %d', $ex->getMessage(), $ex->getCode()));
+        }
     }
 
     public function sendSms(string $recipient_phone_number, $text_message)
     {
         $response = $this->sendSmsRequest($recipient_phone_number, $text_message);
-
-        if ($response['http_code'] === 201)
-        {
-            return $response;
-        }
-        
+        return $response;
     }
 
     public function getSenderAddress(): string
