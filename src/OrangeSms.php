@@ -1,6 +1,7 @@
 <?php
 namespace Wekreit;
 
+use Memcached;
 use Wekreit\Http\Post;
 
 class OrangeSms
@@ -33,10 +34,6 @@ class OrangeSms
             $this->clientSecret = $config['clientSecret'];
         }
 
-        if (array_key_exists('token', $config)) {
-            $this->token = $config['token'];
-        }
-        
         if (array_key_exists('countrySenderNumber', $config)) {
             $this->countrySenderNumber = $config['countrySenderNumber'];
         }
@@ -54,7 +51,7 @@ class OrangeSms
 
         $header = [
             'Content-Type: application/json',
-            'Authorization: Bearer ' . $this->token
+            'Authorization: Bearer ' . $this->getToken()
         ];
 
         $data = json_encode([
@@ -89,5 +86,41 @@ class OrangeSms
     {
         return $this->countrySenderNumber;
     }
+
+    private function setRefreshToken()
+    {
+
+    }
+
+    private function getToken() {
+        $this->setRefreshToken();
+        return $this->token;
+    }
+
+    public function genToken() {
+        define('TOKEN_URL', self::BASE_URL . self::TOKEN);
+        $header = [
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ];
+
+        $curl = new Post(TOKEN_URL, [
+            CURLOPT_HTTPHEADER => $header
+        ]);
+
+        $data = http_build_query([
+            'grant_type'    => 'client_credentials',
+            'client_id'     => $this->clientId,
+            'client_secret' => $this->clientSecret
+        ]);
+
+        try {
+            $response = (array)json_decode($curl($data));
+
+            return $response['access_token'];
+        } catch (\RuntimeException $ex){
+            die(sprintf('Http error %s with code %d', $ex->getMessage(), $ex->getCode()));
+        }
+    }
+
 }
 
