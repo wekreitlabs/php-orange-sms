@@ -1,7 +1,6 @@
 <?php
 namespace Wekreit;
 
-use Memcached;
 use Wekreit\Http\Post;
 
 class OrangeSms
@@ -87,13 +86,7 @@ class OrangeSms
         return $this->countrySenderNumber;
     }
 
-    private function setRefreshToken()
-    {
-
-    }
-
     private function getToken() {
-        $this->setRefreshToken();
         return $this->token;
     }
 
