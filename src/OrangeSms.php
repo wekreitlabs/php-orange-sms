@@ -1,8 +1,7 @@
 <?php
+namespace Wekreit;
 
-namespace Wekreit\OrangeSms;
-
-use Wekreit\OrangeSms\Http\Post;
+use Wekreit\Http\Post;
 
 class OrangeSms
 {
@@ -17,9 +16,9 @@ class OrangeSms
     protected $applicationId = '';
     protected $clientSecret = '';
     protected $token = '';
-    protected $countrySenderNumber = '2250000';
+    protected $countrySenderNumber = 'tel:+2250000';
 
-    function __construct($config = [])
+    function __construct(array $config = [])
     {
         if(array_key_exists('clientId', $config))
         {
@@ -43,30 +42,30 @@ class OrangeSms
         }
     }
 
-    private function sendSmsRequest(string $recipientPhoneNumber, string $SmsTextMessage)
+    private function sendSmsRequest(string $recipientPhoneNumber, string $smsTextMessage)
     {
         define('URL_API',
                self::BASE_URL .
                self::MESSANGING .
-               "/outbound/tel%3A%2B" .
-               $this->getSenderAddress() .
-               "/request"
+               "/outbound/" .
+               urlencode($this->getSenderAddress()) .
+               "/requests"
         );
 
-        $header =  array(
+        $header = [
             'Content-Type: application/json',
-            'Authorization: Basic ' . $this->token
-        );
+            'Authorization: Bearer ' . $this->token
+        ];
 
-        $data = [
+        $data = json_encode([
             "outboundSMSMessageRequest" => [
-                "address" => "tel+" . $recipientPhoneNumber,
-                "senderAddress" => "tel+" . $this->getSenderAddress(),
+                "address" => "tel:" . $recipientPhoneNumber,
+                "senderAddress" => $this->getSenderAddress(),
                 "outboundSMSTextMessage" => [
-                    "message" => $SmsTextMessage,
+                    "message" => $smsTextMessage,
                 ],
             ]
-        ];
+        ]);
 
         $curl = new Post(URL_API, [
             CURLOPT_HTTPHEADER => $header,

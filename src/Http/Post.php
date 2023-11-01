@@ -1,6 +1,6 @@
 <?php
 
-namespace Wekreit\OrangeSms\Http;
+namespace Wekreit\Http;
 
 class Post {
     private $url;
@@ -12,7 +12,7 @@ class Post {
         $this->options = $options;
     }
 
-    public function __invoke(array $post)
+    public function __invoke($post)
     {
         $ch = curl_init($this->url);
 
@@ -21,7 +21,7 @@ class Post {
             \curl_setopt($ch, $key, $value);
         }
         
-        \curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+        \curl_setopt($ch, CURLOPT_POSTFIELDS,$post);
         \curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $reponse = \curl_exec($ch);
