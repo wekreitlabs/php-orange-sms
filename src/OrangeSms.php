@@ -5,12 +5,10 @@ use Wekreit\Http\Post;
 
 class OrangeSms
 {
-    // BASE URL Constantes
     const BASE_URL = 'https://api.orange.com';
     const TOKEN = '/oauth/v3/token';
     const MESSANGING = '/smsmessaging/v1';
     const CONTRACT_MANAGEMENT = '/sms/admin/v1';
-    const TPS_LIMIT = 5;
     
     protected $clientId = '';
     protected $applicationId = '';
@@ -50,7 +48,7 @@ class OrangeSms
 
         $header = [
             'Content-Type: application/json',
-            'Authorization: Bearer ' . $this->getToken()
+            'Authorization: Bearer ' . $this->token
         ];
 
         $data = json_encode([
@@ -86,11 +84,13 @@ class OrangeSms
         return $this->countrySenderNumber;
     }
 
-    private function getToken() {
+    public function getToken() {
+        $token = $this->genToken();
+        $this->token = $token;
         return $this->token;
     }
 
-    public function genToken() {
+    private function genToken() {
         define('TOKEN_URL', self::BASE_URL . self::TOKEN);
         $header = [
             'Content-Type' => 'application/x-www-form-urlencoded'
