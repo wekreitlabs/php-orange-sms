@@ -1,41 +1,11 @@
 <?php
 namespace Wekreit;
 
-use Wekreit\Http\Post;
+use Wekreit\Exception\SMSClientException;
+use Wekreit\Http\SMSClient;
 
-class OrangeSms
+class SMS 
 {
-    const BASE_URL = 'https://api.orange.com';
-    const TOKEN = '/oauth/v3/token';
-    const MESSANGING = '/smsmessaging/v1';
-    const CONTRACT_MANAGEMENT = '/sms/admin/v1';
-    
-    protected $clientId = '';
-    protected $applicationId = '';
-    protected $clientSecret = '';
-    protected $token = '';
-    protected $countrySenderNumber = 'tel:+2250000';
-
-    function __construct(array $config = [])
-    {
-        if(array_key_exists('clientId', $config))
-        {
-            $this->clientId = $config['clientId'];
-        }
-
-        if (array_key_exists('applicationId', $config)) {
-            $this->applicationId = $config['applicationId'];
-        }
-
-        if (array_key_exists('clientSecret', $config)) {
-            $this->clientSecret = $config['clientSecret'];
-        }
-
-        if (array_key_exists('countrySenderNumber', $config)) {
-            $this->countrySenderNumber = $config['countrySenderNumber'];
-        }
-    }
-
     private function sendSmsRequest(string $recipientPhoneNumber, string $smsTextMessage)
     {
         define('URL_API',
@@ -67,7 +37,7 @@ class OrangeSms
 
         try {
             return $curl($data);
-        } catch (\RuntimeException $ex)
+        } catch (SMSClientException $ex)
         {
             die(sprintf('Http error %s with code %d', $ex->getMessage(), $ex->getCode()));
         }
