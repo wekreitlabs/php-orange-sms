@@ -6,84 +6,36 @@ use Wekreit\Http\SMSClient;
 
 class SMS 
 {
-    private function sendSmsRequest(string $recipientPhoneNumber, string $smsTextMessage)
+    protected $message = '';
+    protected $recipientPhoneNumber = 'tel:+';
+    protected $senderAddress = 'tel:+';
+    protected $clientInstance;
+    
+    public function __construct($client)
     {
-        define('URL_API',
-               self::BASE_URL .
-               self::MESSANGING .
-               "/outbound/" .
-               urlencode($this->getSenderAddress()) .
-               "/requests"
-        );
-
-        $header = [
-            'Content-Type: application/json',
-            'Authorization: Bearer ' . $this->token
-        ];
-
-        $data = json_encode([
-            "outboundSMSMessageRequest" => [
-                "address" => "tel:" . $recipientPhoneNumber,
-                "senderAddress" => $this->getSenderAddress(),
-                "outboundSMSTextMessage" => [
-                    "message" => $smsTextMessage,
-                ],
-            ]
-        ]);
-
-        $curl = new Post(URL_API, [
-            CURLOPT_HTTPHEADER => $header,
-        ]);
-
-        try {
-            return $curl($data);
-        } catch (SMSClientException $ex)
-        {
-            die(sprintf('Http error %s with code %d', $ex->getMessage(), $ex->getCode()));
-        }
+        $this->clientInstance = $client;
     }
 
-    public function sendSms(string $recipient_phone_number, $text_message)
+    public function message(string $textMessage)
     {
-        $response = $this->sendSmsRequest($recipient_phone_number, $text_message);
-        return $response;
+        $this->message = $textMessage;
+        return $this;
     }
 
-    public function getSenderAddress(): string
+    public function to(string $recipientPhoneNumber)
     {
-        return $this->countrySenderNumber;
+        $this->recipientPhoneNumber .= $recipientPhoneNumber;
+        return $this;
     }
 
-    public function getToken() {
-        $token = $this->genToken();
-        $this->token = $token;
-        return $this->token;
+    public function from(string $senderAddress)
+    {
+        $this->senderAddress .= $senderAddress;
+        return $this;
     }
 
-    private function genToken() {
-        define('TOKEN_URL', self::BASE_URL . self::TOKEN);
-        $header = [
-            'Content-Type' => 'application/x-www-form-urlencoded'
-        ];
-
-        $curl = new Post(TOKEN_URL, [
-            CURLOPT_HTTPHEADER => $header
-        ]);
-
-        $data = http_build_query([
-            'grant_type'    => 'client_credentials',
-            'client_id'     => $this->clientId,
-            'client_secret' => $this->clientSecret
-        ]);
-
-        try {
-            $response = (array)json_decode($curl($data));
-
-            return $response['access_token'];
-        } catch (\RuntimeException $ex){
-            die(sprintf('Http error %s with code %d', $ex->getMessage(), $ex->getCode()));
-        }
+    public function send()
+    {
+        //...
     }
-
 }
-

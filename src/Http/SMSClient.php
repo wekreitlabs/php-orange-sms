@@ -23,11 +23,8 @@ class SMSClient extends SMSClientRequest
         $clientSecret = null,
         $token = null)
     {
-        self::$clientId     = $clientId;
-        self::$clientSecret = $clientSecret;
-
         if (isset($clientId) && isset($clientSecret)) {
-            return self::pullNewToken();
+            return self::pullNewToken($clientId, $clientSecret);
         }
 
         if (isset($token)){
@@ -35,13 +32,13 @@ class SMSClient extends SMSClientRequest
         }
     }
 
-    protected static function pullNewToken()
+    protected static function pullNewToken(string $clientId, string $clientSecret)
     {
         $client = new Client([ 'base_uri' => self::BASE_URL ]);
         $response = $client->request('POST', self::TOKEN, [
             'form_params' => [
-                'client_id' => self::$clientId,
-                'client_secret' => self::$clientSecret,
+                'client_id' => $clientId,
+                'client_secret' => $clientSecret,
                 'grant_type' => 'client_credentials'
             ]
         ]);
