@@ -6,9 +6,9 @@ use Wekreit\Http\SMSClient;
 
 class SMS 
 {
-    protected $message = '';
-    protected $recipientPhoneNumber = 'tel:+';
-    protected $senderAddress = 'tel:+';
+    protected array $message = '';
+    protected string $recipientPhoneNumber = 'tel:+';
+    protected string $senderAddress = 'tel:+';
     protected $clientInstance;
     
     public function __construct($client)
@@ -34,8 +34,17 @@ class SMS
         return $this;
     }
 
+    private function outboundSMSMessageRequest()
+    {
+        return ["outboundSMSMessageRequest" => [
+            "address" => $this->recipientPhoneNumber,
+            "senderMessage" => $this->senderAddress,
+            "outboundSMSTextMessage" => $this->message
+        ]];
+    }
+
     public function send()
     {
-        //...
+        return $this->outboundSMSMessageRequest();
     }
 }
