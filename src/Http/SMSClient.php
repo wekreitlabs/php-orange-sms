@@ -15,10 +15,10 @@ class SMSClient extends SMSClientRequest
     protected static $clientSecret = '';
 
     protected $applicationId       = '';
-    protected static $token               = '';
+    protected static $token        = '';
     protected $countrySenderNumber = 'tel:+2250000';
 
-    public static function initClient(
+    public static function initInstance(
         $clientId = null,
         $clientSecret = null,
         $token = null)
@@ -43,12 +43,7 @@ class SMSClient extends SMSClientRequest
             ]
         ]);
 
-        return json_decode($response->getBody())->access_token;
-    }
-
-    protected static function setToken($token)
-    {
-        self::$token = $token;
+        return self::$token = json_decode($response->getBody())->access_token;
     }
 
     public function getToken()
