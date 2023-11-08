@@ -24,7 +24,8 @@ class SMSClient extends SMSClientRequest
         $token = null)
     {
         if (isset($clientId) && isset($clientSecret)) {
-            return self::pullNewToken($clientId, $clientSecret);
+            self::pullNewToken($clientId, $clientSecret);
+            return self::$token;
         }
 
         if (isset($token)){
@@ -45,10 +46,4 @@ class SMSClient extends SMSClientRequest
 
         return self::$token = json_decode($response->getBody())->access_token;
     }
-
-    public function getToken()
-    {
-       return self::$token; 
-    }
-
 }
