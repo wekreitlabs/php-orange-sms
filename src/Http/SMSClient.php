@@ -11,29 +11,25 @@ class SMSClient extends SMSClientRequest
     const MESSANGING          = '/smsmessaging/v1';
     const CONTRACT_MANAGEMENT = '/sms/admin/v1';
     
-    protected static $clientId     = '';
-    protected static $clientSecret = '';
+    protected $clientId;
+    protected $clientSecret;
 
-    protected $applicationId       = '';
-    protected static $token        = '';
+    protected $applicationId;
+    protected $token;
     protected $countrySenderNumber = 'tel:+2250000';
 
-    public static function initInstance(
-        $clientId = null,
-        $clientSecret = null,
-        $token = null)
+    private function __construct($token)
     {
-        if (isset($clientId) && isset($clientSecret)) {
-            self::pullNewToken($clientId, $clientSecret);
-            return self::$token;
-        }
-
-        if (isset($token)){
-            //...
-        }
+        $this->setToken($token);
     }
 
-    protected static function pullNewToken(string $clientId, string $clientSecret)
+    public static function initInstance($token)
+    {
+
+        return new self($token);
+    }
+
+    protected function pullNewToken(string $clientId, string $clientSecret)
     {
         $client = new Client([ 'base_uri' => self::BASE_URL ]);
         $response = $client->request('POST', self::TOKEN, [
@@ -44,6 +40,16 @@ class SMSClient extends SMSClientRequest
             ]
         ]);
 
-        return self::$token = json_decode($response->getBody())->access_token;
+        return $this->setToken(json_decode($response->getBody())->access_token);
+    }
+
+    protected function setToken($token)
+    {
+        $this->token = $token;
+    }
+
+    public function getToken()
+    {
+        return $this->token;
     }
 }

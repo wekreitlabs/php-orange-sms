@@ -13,7 +13,7 @@ class SMS
     
     public function __construct($client)
     {
-        $this->token = $client;
+        $this->token = $client->getToken();
     }
 
     public function message(string $textMessage)
