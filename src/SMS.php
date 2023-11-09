@@ -6,14 +6,15 @@ use Wekreit\Http\SMSClient;
 
 class SMS 
 {
-    protected array $message = [];
+    protected array  $message;
     protected string $recipientPhoneNumber = 'tel:+';
     protected string $senderAddress = 'tel:+';
     protected string $token;
+    protected $client;
     
     public function __construct($client)
     {
-        $this->token = $client->getToken();
+        $this->client = $client;
     }
 
     public function message(string $textMessage)
@@ -46,11 +47,11 @@ class SMS
     public function send()
     {
         //... User SMSClient to send the SMS
-        return $this->outboundSMSMessageRequest();
+        return $this->client->sendSms($this->outboundSMSMessageRequest());
     }
 
     public function getToken()
     {
-        return $this->token;
+        return $this->token = $this->client->getToken();
     }
 }

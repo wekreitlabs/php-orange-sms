@@ -53,6 +53,24 @@ class SMSClient extends SMSClientRequest
         $this->token = $token;
     }
 
+    public function sendSMS(array $outboundSMSMessageRequest = [])
+    {
+        define('SMSMessageRequestEndPoint', "outbound/tel%3A%2B" . $this->countrySenderNumber . "/requests");
+
+        $client = new Client([ 'base_uri' => self::BASE_URL ]);
+        $header = [
+            'Authorization' => 'Bearer ' . $this->getToken(),
+            'Content-Type' => 'application/json'
+        ];
+        $response = $client->request('POST', self::MESSANGING . '/' . SMSMessageRequestEndPoint, [
+            "headers" => $header,
+            'json'    => json_encode($outboundSMSMessageRequest)
+        ]
+       );
+
+        return $response->getBody()->getContents();
+    }
+
     public function getToken()
     {
         return $this->token;
