@@ -18,15 +18,20 @@ class SMSClient extends SMSClientRequest
     protected $token;
     protected $countrySenderNumber = 'tel:+2250000';
 
-    private function __construct($token)
+    private function __construct($clientOrClientId, $clientSecret)
     {
-        $this->setToken($token);
+        if ($clientOrClientId !== null && $clientSecret === null) {
+            $this->setToken($clientOrClientId);
+        } elseif ($clientOrClientId !== null && $clientSecret !== null) {
+            $this->pullNewToken($clientOrClientId, $clientSecret);
+        } else {
+            throw new \Exception("Not clientId or clientSecret given");
+        }
     }
 
-    public static function initInstance($token)
+    public static function initInstance($clientOrToken = null, $clientSecret = null)
     {
-
-        return new self($token);
+        return new self($clientOrToken, $clientSecret);
     }
 
     protected function pullNewToken(string $clientId, string $clientSecret)
