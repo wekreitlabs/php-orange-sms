@@ -17,7 +17,7 @@ abstract class SMSClientRequest
     abstract public function getToken();
     abstract protected function pullNewToken(string $clientId,string $clientSecret);
     abstract protected function setToken($token);
-    abstract protected function sendSMS(array $outboundSMSMessageRequest = []);
+    abstract protected function sendSMS($outboundSMSMessageRequest);
     // TODO : Implement this methods
     // abstract public function getApplicationId();
     // abstract public function setApplicationId($applicationId);

@@ -15,7 +15,7 @@ use Wekreit\Http\SMSClient;
  */
 class SMS 
 {
-    protected array  $message;
+    protected $message;
     protected string $recipientPhoneNumber = 'tel:+';
     protected string $senderAddress = 'tel:+';
     protected string $token;
@@ -70,7 +70,7 @@ class SMS
     {
         return ["outboundSMSMessageRequest" => [
             "address" => $this->recipientPhoneNumber,
-            "senderMessage" => $this->senderAddress,
+            "senderAddress" => $this->senderAddress,
             "outboundSMSTextMessage" => $this->message
         ]];
     }
@@ -82,7 +82,8 @@ class SMS
     public function send()
     {
         //... User SMSClient to send the SMS
-        return $this->client->sendSms($this->outboundSMSMessageRequest());
+        // return var_dump(json_encode($this->outboundSMSMessageRequest()));
+        return $this->client->sendSms(json_encode($this->outboundSMSMessageRequest()));
     }
 
     /**

@@ -91,9 +91,9 @@ class SMSClient extends SMSClientRequest
      * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function sendSMS(array $outboundSMSMessageRequest = [])
+    public function sendSMS($outboundSMSMessageRequest)
     {
-        define('SMSMessageRequestEndPoint', "outbound/tel%3A%2B" . $this->countrySenderNumber . "/requests");
+        define('SMSMessageRequestEndPoint', "outbound/" . urlencode($this->countrySenderNumber ) . "/requests");
 
         $client = new Client([ 'base_uri' => self::BASE_URL ]);
         $header = [
@@ -102,7 +102,7 @@ class SMSClient extends SMSClientRequest
         ];
         $response = $client->request('POST', self::MESSANGING . '/' . SMSMessageRequestEndPoint, [
             "headers" => $header,
-            'json'    => json_encode($outboundSMSMessageRequest)
+            "body" => $outboundSMSMessageRequest
         ]
        );
 
