@@ -4,6 +4,16 @@ namespace Wekreit\Http;
 use Wekreit\Http\SMSClientRequest;
 use GuzzleHttp\Client;
 
+/**
+ * Class SMSClient
+ * @method mixed getToken()
+ * @method mixed sendSMS(array $outboundSMSMessageRequest = [])
+ * @method mixed pullNewToken(string $clientId, string $clientSecret)
+ * @method mixed initInstance($clientOrToken = null, $clientSecret = null)
+ * @method mixed send()
+ * @method mixed getToken()
+ * @package Wekreit\Http
+ */
 class SMSClient extends SMSClientRequest
 {
     const BASE_URL            = 'https://api.orange.com';
@@ -18,6 +28,12 @@ class SMSClient extends SMSClientRequest
     protected $token;
     protected $countrySenderNumber = 'tel:+2250000';
 
+    /**
+     * SMSClient constructor.
+     * @param $clientOrClientId
+     * @param $clientSecret
+     * @throws \Exception
+     */
     private function __construct($clientOrClientId, $clientSecret)
     {
         if ($clientOrClientId !== null && $clientSecret === null) {
@@ -29,11 +45,24 @@ class SMSClient extends SMSClientRequest
         }
     }
 
+    /**
+     * @param null $clientOrToken
+     * @param null $clientSecret
+     * @return SMSClient
+     * @throws \Exception
+     */
     public static function initInstance($clientOrToken = null, $clientSecret = null)
     {
         return new self($clientOrToken, $clientSecret);
     }
 
+    /**
+     * TODO : Implement Exception Handling
+     * @param string $clientId
+     * @param string $clientSecret
+     * @return $this
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     protected function pullNewToken(string $clientId, string $clientSecret)
     {
         $client = new Client([ 'base_uri' => self::BASE_URL ]);
@@ -48,11 +77,20 @@ class SMSClient extends SMSClientRequest
         return $this->setToken(json_decode($response->getBody())->access_token);
     }
 
+    /**
+     * @param $token
+     */
     protected function setToken($token)
     {
         $this->token = $token;
     }
 
+    /**
+     * TODO : Implement Exception Handling
+     * @param array $outboundSMSMessageRequest
+     * @return string
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function sendSMS(array $outboundSMSMessageRequest = [])
     {
         define('SMSMessageRequestEndPoint', "outbound/tel%3A%2B" . $this->countrySenderNumber . "/requests");
@@ -71,6 +109,10 @@ class SMSClient extends SMSClientRequest
         return $response->getBody()->getContents();
     }
 
+    /**
+     * TODO : Implement Exception Handling
+     * @return token
+     */
     public function getToken()
     {
         return $this->token;

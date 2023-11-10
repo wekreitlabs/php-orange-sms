@@ -4,6 +4,15 @@ namespace Wekreit;
 use Wekreit\Exception\SMSClientException;
 use Wekreit\Http\SMSClient;
 
+/**
+ * Class SMS
+ * @method SMS message(string $textMessage)
+ * @method SMS to(string $recipientPhoneNumber)
+ * @method SMS from(string $senderAddress)
+ * @method mixed send()
+ * @method mixed getToken()
+ * @package Wekreit
+ */
 class SMS 
 {
     protected array  $message;
@@ -12,29 +21,51 @@ class SMS
     protected string $token;
     protected $client;
     
+    /**
+     * SMS constructor.
+     * @param SMSClient $client
+     */
     public function __construct($client)
     {
         $this->client = $client;
     }
 
+    /**
+     * @param string $textMessage
+     * @return $this
+     * @throws SMSClientException
+     */
     public function message(string $textMessage)
     {
         $this->message = ['message' => $textMessage];
         return $this;
     }
 
+    /**
+     * @param string $recipientPhoneNumber
+     * @return $this
+     * @throws SMSClientException
+     */
     public function to(string $recipientPhoneNumber)
     {
         $this->recipientPhoneNumber .= $recipientPhoneNumber;
         return $this;
     }
 
+    /**
+     * @param string $senderAddress
+     * @return $this
+     * @throws SMSClientException
+     */
     public function from(string $senderAddress)
     {
         $this->senderAddress .= $senderAddress;
         return $this;
     }
 
+    /**
+     * @return array
+    */
     private function outboundSMSMessageRequest()
     {
         return ["outboundSMSMessageRequest" => [
@@ -44,12 +75,20 @@ class SMS
         ]];
     }
 
+    /**
+     * @return mixed
+     * @throws SMSClientException
+     */
     public function send()
     {
         //... User SMSClient to send the SMS
         return $this->client->sendSms($this->outboundSMSMessageRequest());
     }
 
+    /**
+     * @return mixed
+     * @throws SMSClientException
+     */
     public function getToken()
     {
         return $this->token = $this->client->getToken();
