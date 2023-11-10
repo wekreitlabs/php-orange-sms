@@ -14,15 +14,10 @@ namespace Wekreit\Http;
 abstract class SMSClientRequest
 {
     abstract public static function initInstance($token);
-    abstract public function send();
     abstract public function getToken();
-    abstract public function pullNewToken($clientId, $clientSecret);
-    abstract public function setToken($token);
-    abstract public function sendSMS(array $outboundSMSMessageRequest = []);
-    abstract public function from(string $senderAddress);
-    abstract public function to(string $recipientPhoneNumber);
-    abstract public function message(string $textMessage);
-
+    abstract protected function pullNewToken(string $clientId,string $clientSecret);
+    abstract protected function setToken($token);
+    abstract protected function sendSMS(array $outboundSMSMessageRequest = []);
     // TODO : Implement this methods
     // abstract public function getApplicationId();
     // abstract public function setApplicationId($applicationId);
