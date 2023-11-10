@@ -83,7 +83,7 @@ class SMS
     {
         //... User SMSClient to send the SMS
         // return var_dump(json_encode($this->outboundSMSMessageRequest()));
-        return $this->client->sendSms(json_encode($this->outboundSMSMessageRequest()));
+        return $this->client->sendSms($this->outboundSMSMessageRequest());
     }
 
     /**

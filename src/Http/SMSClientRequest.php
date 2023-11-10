@@ -13,11 +13,16 @@ namespace Wekreit\Http;
  */
 abstract class SMSClientRequest
 {
-    abstract public static function initInstance($token);
-    abstract public function getToken();
-    abstract protected function pullNewToken(string $clientId,string $clientSecret);
-    abstract protected function setToken($token);
-    abstract protected function sendSMS($outboundSMSMessageRequest);
+    abstract public static function initInstance(string | null $clientOrToken, string | null $clientSecret) : self;
+    abstract public function getToken(): string;
+    abstract protected function pullNewToken(string $clientId,string $clientSecret): string;
+    abstract protected function setToken(string $token): void;
+    /**
+     * @param array $outboundSMSMessageRequest
+     * @return array<string>
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    abstract protected function sendSMS(array $outboundSMSMessageRequest): string;
     // TODO : Implement this methods
     // abstract public function getApplicationId();
     // abstract public function setApplicationId($applicationId);

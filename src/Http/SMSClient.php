@@ -21,20 +21,20 @@ class SMSClient extends SMSClientRequest
     const MESSANGING          = '/smsmessaging/v1';
     const CONTRACT_MANAGEMENT = '/sms/admin/v1';
     
-    protected $clientId;
-    protected $clientSecret;
+    protected string $clientId;
+    protected string $clientSecret;
 
-    protected $applicationId;
-    protected $token;
-    protected $countrySenderNumber = 'tel:+2250000';
+    protected string $applicationId;
+    protected string $token;
+    protected string $countrySenderNumber = 'tel:+2250000';
 
     /**
      * SMSClient constructor.
-     * @param $clientOrClientId
-     * @param $clientSecret
+     * @param string | null $clientOrClientId
+     * @param string | null $clientSecret
      * @throws \Exception
      */
-    private function __construct($clientOrClientId, $clientSecret)
+    private function __construct(string | null $clientOrClientId, string | null $clientSecret)
     {
         if ($clientOrClientId !== null && $clientSecret === null) {
             $this->setToken($clientOrClientId);
@@ -51,7 +51,7 @@ class SMSClient extends SMSClientRequest
      * @return SMSClient
      * @throws \Exception
      */
-    public static function initInstance($clientOrToken = null, $clientSecret = null)
+    public static function initInstance($clientOrToken = null, $clientSecret = null): self
     {
         return new self($clientOrToken, $clientSecret);
     }
@@ -60,10 +60,10 @@ class SMSClient extends SMSClientRequest
      * TODO : Implement Exception Handling
      * @param string $clientId
      * @param string $clientSecret
-     * @return $this
+     * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    protected function pullNewToken(string $clientId, string $clientSecret)
+    protected function pullNewToken(string $clientId, string $clientSecret): string
     {
         $client = new Client([ 'base_uri' => self::BASE_URL ]);
         $response = $client->request('POST', self::TOKEN, [
@@ -74,24 +74,26 @@ class SMSClient extends SMSClientRequest
             ]
         ]);
 
-        return $this->setToken(json_decode($response->getBody())->access_token);
+        $this->setToken(json_decode($response->getBody())->access_token);
+        return $this->getToken();
     }
 
     /**
      * @param $token
+     * @return void
      */
-    protected function setToken($token)
+    protected function setToken(string $token): void
     {
         $this->token = $token;
     }
 
     /**
      * TODO : Implement Exception Handling
-     * @param array $outboundSMSMessageRequest
+     * @param array<string> $outboundSMSMessageRequest
      * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function sendSMS($outboundSMSMessageRequest)
+    public function sendSMS(array $outboundSMSMessageRequest): string
     {
         define('SMSMessageRequestEndPoint', "outbound/" . urlencode($this->countrySenderNumber ) . "/requests");
 
@@ -102,7 +104,7 @@ class SMSClient extends SMSClientRequest
         ];
         $response = $client->request('POST', self::MESSANGING . '/' . SMSMessageRequestEndPoint, [
             "headers" => $header,
-            "body" => $outboundSMSMessageRequest
+            "body" => json_encode($outboundSMSMessageRequest)
         ]
        );
 
@@ -111,9 +113,9 @@ class SMSClient extends SMSClientRequest
 
     /**
      * TODO : Implement Exception Handling
-     * @return token
+     * @return string
      */
-    public function getToken()
+    public function getToken(): string
     {
         return $this->token;
     }
