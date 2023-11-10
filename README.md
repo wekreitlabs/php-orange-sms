@@ -11,9 +11,25 @@ use Wekreit\SMS;
 $client = SMSClient::initInstance("clientId", "clientSecret");
 
 $sms = new SMS($client);
-$sms->from("2250000")
-    ->to("2250709000000")
-    ->message("Test orange api sms")
+$sms->from("2250000") // senderAddress
+    ->to("2250709000000") // Recipient phone number
+    ->message("Test orange api sms") // text message
     ->send();
 
-``` 
+```
+Or if you already have token:
+```php
+$client = SMSClient::initInstance("token");
+
+$sms = new SMS($client);
+$sms->from("2250000") // senderAddress
+    ->to("2250709000000") // Recipient phone number
+    ->message("Test orange api sms") // text message
+    ->send();
+```
+
+For get token made:
+```php
+$client = SMSClient::initInstance("clientId", "clientSecret");
+$client->getToken(); // return token 
+```
