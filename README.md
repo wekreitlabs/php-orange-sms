@@ -17,7 +17,7 @@ $sms->from("2250000") // senderAddress
     ->send();
 
 ```
-Or if you already have token:
+Or if you already have a `token`:
 ```php
 $client = SMSClient::initInstance("token");
 
@@ -28,7 +28,7 @@ $sms->from("2250000") // senderAddress
     ->send();
 ```
 
-For get token made:
+For get `token` made:
 ```php
 $client = SMSClient::initInstance("clientId", "clientSecret");
 $client->getToken(); // return token 
