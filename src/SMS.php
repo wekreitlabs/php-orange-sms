@@ -15,11 +15,14 @@ use Wekreit\Http\SMSClient;
  */
 class SMS 
 {
-    protected $message;
+    /**
+     * @var array<string, string>
+     */
+    protected array  $message;
     protected string $recipientPhoneNumber = 'tel:+';
     protected string $senderAddress = 'tel:+';
     protected string $token;
-    protected $client;
+    protected SMSClient $client;
     
     /**
      * SMS constructor.
@@ -64,9 +67,9 @@ class SMS
     }
 
     /**
-     * @return array
+     * @return  array<string, mixed>
     */
-    private function outboundSMSMessageRequest()
+    private function outboundSMSMessageRequest() 
     {
         return ["outboundSMSMessageRequest" => [
             "address" => $this->recipientPhoneNumber,
@@ -87,11 +90,12 @@ class SMS
     }
 
     /**
-     * @return mixed
+     * @return string
      * @throws SMSClientException
      */
     public function getToken()
     {
-        return $this->token = $this->client->getToken();
+        $this->token = $this->client->getToken();
+        return $this->token;
     }
 }

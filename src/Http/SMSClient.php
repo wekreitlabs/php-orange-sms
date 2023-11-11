@@ -3,16 +3,10 @@ namespace Wekreit\Http;
 
 use Wekreit\Http\SMSClientRequest;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Class SMSClient
- * @method mixed getToken()
- * @method mixed sendSMS(array $outboundSMSMessageRequest = [])
- * @method mixed pullNewToken(string $clientId, string $clientSecret)
- * @method mixed initInstance($clientOrToken = null, $clientSecret = null)
- * @method mixed send()
- * @method mixed getToken()
- * @package Wekreit\Http
  */
 class SMSClient extends SMSClientRequest
 {
@@ -66,16 +60,26 @@ class SMSClient extends SMSClientRequest
     protected function pullNewToken(string $clientId, string $clientSecret): string
     {
         $client = new Client([ 'base_uri' => self::BASE_URL ]);
-        $response = $client->request('POST', self::TOKEN, [
-            'form_params' => [
-                'client_id' => $clientId,
-                'client_secret' => $clientSecret,
-                'grant_type' => 'client_credentials'
-            ]
-        ]);
+        try {
+            $response = $client->request('POST', self::TOKEN, [
+                'form_params' => [
+                    'client_id' => $clientId,
+                    'client_secret' => $clientSecret,
+                    'grant_type' => 'client_credentials'
+                ]
+            ]);
 
-        $this->setToken(json_decode($response->getBody())->access_token);
-        return $this->getToken();
+            $decodedResponse = json_decode($response->getBody(), true);
+            if (!is_object($decodedResponse) || !property_exists($decodedResponse, 'access_token')) {
+                throw new \Error("No access token found");
+            }
+
+            $this->setToken($decodedResponse->access_token);
+            return $this->getToken();
+
+        } catch (GuzzleException $e) {
+            throw new \Error($e->getMessage());
+        }
     }
 
     /**
@@ -89,7 +93,7 @@ class SMSClient extends SMSClientRequest
 
     /**
      * TODO : Implement Exception Handling
-     * @param array<string> $outboundSMSMessageRequest
+     * @param array<string, mixed> $outboundSMSMessageRequest
      * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */

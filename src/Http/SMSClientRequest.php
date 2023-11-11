@@ -18,8 +18,8 @@ abstract class SMSClientRequest
     abstract protected function pullNewToken(string $clientId,string $clientSecret): string;
     abstract protected function setToken(string $token): void;
     /**
-     * @param array $outboundSMSMessageRequest
-     * @return array<string>
+     * @param array<string> $outboundSMSMessageRequest
+     * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     abstract protected function sendSMS(array $outboundSMSMessageRequest): string;
