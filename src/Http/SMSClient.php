@@ -69,7 +69,7 @@ class SMSClient extends SMSClientRequest
                 ]
             ]);
 
-            $decodedResponse = json_decode($response->getBody(), true);
+            $decodedResponse = json_decode($response->getBody()->getContents());
             if (!is_object($decodedResponse) || !property_exists($decodedResponse, 'access_token')) {
                 throw new \Error("No access token found");
             }

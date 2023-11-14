@@ -12,6 +12,7 @@ use Wekreit\Http\SMSClient;
  * @method mixed send()
  * @method mixed getToken()
  * @package Wekreit
+ * @throws SMSClientException
  */
 class SMS 
 {
