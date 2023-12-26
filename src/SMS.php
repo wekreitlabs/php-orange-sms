@@ -14,7 +14,7 @@ use Wekreit\Http\SMSClient;
  * @package Wekreit
  * @throws SMSClientException
  */
-class SMS 
+class SMS
 {
     /**
      * @var array<string, string>
@@ -24,7 +24,8 @@ class SMS
     protected string $senderAddress = 'tel:+';
     protected string $token;
     protected SMSClient $client;
-    
+    protected string $senderName;
+
     /**
      * SMS constructor.
      * @param SMSClient $client
@@ -67,14 +68,21 @@ class SMS
         return $this;
     }
 
+    public function name(string $senderName)
+    {
+        $this->senderName = $senderName;
+        return $this;
+    }
+
     /**
      * @return  array<string, mixed>
     */
-    private function outboundSMSMessageRequest() 
+    private function outboundSMSMessageRequest()
     {
         return ["outboundSMSMessageRequest" => [
             "address" => $this->recipientPhoneNumber,
             "senderAddress" => $this->senderAddress,
+            "senderName" => $this->senderName,
             "outboundSMSTextMessage" => $this->message
         ]];
     }
