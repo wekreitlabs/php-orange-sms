@@ -14,7 +14,7 @@ class SMSClient extends SMSClientRequest
     const TOKEN               = '/oauth/v3/token';
     const MESSANGING          = '/smsmessaging/v1';
     const CONTRACT_MANAGEMENT = '/sms/admin/v1';
-    
+
     protected string $clientId;
     protected string $clientSecret;
 
